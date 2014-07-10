@@ -20,11 +20,11 @@ L.DivTransform = L.ImageOverlay.extend({
     _initImage: function () {
         this._image = L.DomUtil.create('div', 'leaflet-image-layer');
 
-        if (this._map.options.zoomAnimation && L.Browser.any3d) {
-            L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
-        } else {
+        // if (this._map.options.zoomAnimation && L.Browser.any3d) {
+            // L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
+        // } else {
             L.DomUtil.addClass(this._image, 'leaflet-zoom-hide');
-        }
+        // }
 
         this._imgNode = L.DomUtil.create('div');
         this._imgNode.style[L.DomUtil.TRANSFORM_ORIGIN] = '0 0';

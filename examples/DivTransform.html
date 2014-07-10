@@ -6,12 +6,13 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
 	<script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
 
 	<script src="http://scanex.github.io/Leaflet.imageTransform/src/L.ImageTransform.js"></script>
+	<script src="http://scanex.github.io/Leaflet.imageTransform/css/examples.css"></script>
 
 	<script src="../src/L.DivTransform.js"></script>
     
@@ -32,14 +33,6 @@
 			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(55.752797, 37.62482), zoom: 15});
 
         var anchors = [[55.757565, 37.620406], [55.756694, 37.638902], [55.749288, 37.637786], [55.750546, 37.615213]];
-        
-        var gmxImage = new L.DivTransform('', anchors, {
-            opacity: 0.8,
-            width: 900,
-            height: 700,
-            html: '<iframe src="http://player.vimeo.com/video/92251790?wmode=opaque&api=1&autoplay=1" width="900" height="700"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
-        });
-		map.addLayer(gmxImage);
 
 		// To modify the anchor points on image
         L.gmxPolygon = L.Polygon.extend({
@@ -67,6 +60,15 @@
             }
             gmxImage.setAnchors(newAnchors);
 		});
+
+
+        var gmxImage = new L.DivTransform('', anchors, {
+            opacity: 0.8,
+            width: 900,
+            height: 700,
+            html: '<iframe src="http://player.vimeo.com/video/92251790?wmode=opaque&api=1&autoplay=1" width="900" height="700"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+        });
+		map.addLayer(gmxImage);
 	</script>
 </body>
 </html>
