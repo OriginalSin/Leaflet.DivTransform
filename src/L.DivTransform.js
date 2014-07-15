@@ -19,8 +19,9 @@ L.DivTransform = L.ImageOverlay.extend({
 
     _initImage: function () {
         this._image = L.DomUtil.create('div', 'leaflet-image-layer');
+        this._image.style.pointerEvents = 'none';
 
-        // if (this._map.options.zoomAnimation && L.Browser.any3d) {
+            // if (this._map.options.zoomAnimation && L.Browser.any3d) {
             // L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
         // } else {
             L.DomUtil.addClass(this._image, 'leaflet-zoom-hide');
