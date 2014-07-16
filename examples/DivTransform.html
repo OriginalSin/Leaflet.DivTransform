@@ -33,7 +33,6 @@
 			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(25.197080, 55.274212), zoom: 16});
 
         var anchors = [[25.20272785830579,55.2682900428772],[25.199873812913026,55.28564929962158],[25.191117106527642,55.28453350067139],[25.1939519407088,55.266830921173096]];
-
 		// To modify the anchor points on image
         L.gmxPolygon = L.Polygon.extend({
             disableAddRemovePoints: function () {
@@ -66,10 +65,12 @@
             opacity: 1,
             width: 790,
             height: 450,
-            html: '<iframe src="http://player.vimeo.com/video/92251790?wmode=opaque&loop=1&api=1&autoplay=1" width="790" height="450"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+            html: '<iframe src="http://player.vimeo.com/video/92251790?loop=1&api=0&autoplay=1" width="790" height="450"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
         });
         
 		map.addLayer(gmxImage);
+        gmxImage.bringToBack();
+
 	</script>
 </body>
 </html>
