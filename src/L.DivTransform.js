@@ -1,9 +1,4 @@
 L.DivTransform = L.ImageTransform.extend({
-    initialize: function (url, anchors, options) { // (String, LatLngBounds, Object)
-        L.ImageOverlay.prototype.initialize.call(this, url, anchors, options);
-        this.setAnchors(anchors);
-    },
-
     _initImage: function () {
         this._image = L.DomUtil.create('div', 'leaflet-image-layer');
         //this._image.style.pointerEvents = 'none';
