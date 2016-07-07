@@ -15,8 +15,12 @@ L.DivTransform = L.ImageTransform.extend({
         this._imgNode.innerHTML = this.options.html;
         this._image.appendChild(this._imgNode);
 
+        this.fire('loaded');
         this._updateOpacity();
     },
+	getContainer: function () {
+		return this._imgNode;
+	},
     _reset: function () {
         var div = this._image,
             map = this._map,
