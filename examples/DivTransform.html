@@ -45,7 +45,9 @@
 			if (cont) {
 				var video = cont.getElementsByTagName('video')[0];
 				if (video) {
-					video.oncanplaythrough = video.onended = video.play;
+					video.oncanplaythrough = video.onended = function () {
+					    video.play(0);
+					};
 				}
 			}
 		});
