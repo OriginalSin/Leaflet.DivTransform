@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Video Transformation Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+	<script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+
+	<script src="http://scanex.github.io/Leaflet.imageTransform/src/L.ImageTransform.js"></script>
+
+	<script src="../src/exif.js"></script>
+    
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+	<div id="map"></div>
+
+	<script>
+
+		var cloudmadeUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+			cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 23, maxNativeZoom: 19}),
+			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(55.734799, 37.577861), zoom: 18});
+
+        var item = {
+            href: 'DSC00279.jpg',
+            width: 1280,
+            height: 720,
+			anchors: [[55.734885087148086, 37.57973849773407],[55.73387629706783, 37.57740497589111],[55.734583056924244, 37.57642865180969],[55.735594848975055, 37.57864952087402]]
+		};
+		function addImage(src, anchors) {
+			var gmxImage = new L.ImageTransform(src, anchors, {
+				opacity: 1,
+				crossOrigin: 'anonymous'
+			}).on('load', function() {
+				EXIF.getData(gmxImage._imgNode, function() {
+					var img = this,
+						tags = EXIF.getAllTags(img),
+						alt = EXIF.getTag(img, 'GPSAltitude'),
+						lng = EXIF.getTag(this, 'GPSLongitude');
+						lat = EXIF.getTag(this, 'GPSLatitude');
+
+					if (lng) {
+						lng = lng[0].valueOf() + lng[1].valueOf() / 60 + lng[2].valueOf() / 3600;
+						if (EXIF.getTag(this, 'GPSLongitudeRef') === 'W') {
+							lng = -lng;
+						}
+					} else { lng = 0; }
+					if (lat) {
+						lat = lat[0].valueOf() + lat[1].valueOf() / 60 + lat[2].valueOf() / 3600;
+						if (EXIF.getTag(this, 'GPSLatitudeRef') === 'S') {
+							lat = -lat;
+						}
+					} else { lat = 0; }
+
+					var info = { latlng: new L.LatLng( lat, lng, alt ? alt.valueOf() : 0) };
+					['DigitalZoomRation', 'CompressedBitsPerPixel', 'ISOSpeedRatings', 'GPSInfoIFDPointer', 'FocalLength', 'FNumber', 'ExposureTime', 'MaxApertureValue', 'XResolution', 'YResolution']
+						.forEach(function(key) {
+							var r = EXIF.getTag(img, key);
+							if (r) { info[key] = r.valueOf(); }
+						});
+					['ImageDescription', 'DateTime', 'BrightnessValue', 'ExifIFDPointer', 'ExifVersion', 'ExposureBias', 'ExposureMode', 'Make', 'PixelXDimension', 'PixelYDimension', 'ResolutionUnit', 'Saturation', 'SceneCaptureType', 'SceneType', 'Sharpness', 'Software', 'WhiteBalance', 'YCbCrPositioning']
+						.forEach(function(key) {
+							info[key] = EXIF.getTag(img, key);
+						});
+
+					console.log("I was taken ", tags, info);
+					map.setView(info.latlng);
+					// anchors = item.anchors.map(function(arr) {
+						// return [arr[0] - 55.734799 + info.latlng.lat, arr[1] - 37.577861 + info.latlng.lng];
+					// });
+					// gmxImage.setAnchors(anchors);
+					// To modify the anchor points on image
+					L.gmxPolygon = L.Polygon.extend({
+						disableAddRemovePoints: function () {
+							var poly = this.editing._poly;
+							for(var key in this.editing._markerGroup._layers) {
+								var marker = this.editing._markerGroup._layers[key];
+								if(marker._index === undefined) marker._icon.style.display = 'none';
+								else {
+									marker.off('click');
+									marker.on('drag', function (ev){poly.fire('drag');}, this);
+								}
+							}
+						}
+					});
+					var polygon = new L.gmxPolygon(anchors, { fillOpacity: 0 });
+					polygon.editing.enable();
+					map.addLayer(polygon);
+					polygon.disableAddRemovePoints();
+					polygon.on('drag', function(ev) {
+						gmxImage.bringToFront();
+						var newAnchors = [];
+						for(var i = 0, len = ev.target._latlngs.length; i < len; i++) {
+							var marker = ev.target._latlngs[i];
+							newAnchors.push([marker.lat, marker.lng]);
+						}
+						gmxImage.setAnchors(newAnchors);
+						gmxImage.setOpacity(0.5);
+					});
+					map.on('mouseup', function(ev) {
+						gmxImage.setOpacity(1);
+					});
+					 
+				});
+			});
+			map.addLayer(gmxImage);
+			gmxImage.bringToBack();
+		}
+
+		addImage('DSC00279.jpg', [
+			[41.30438857010572, -81.75121486186981],
+			[41.302772590793346, -81.75046384334564],
+			[41.30247437577031, -81.75222873687744],
+			[41.3039211088851, -81.75281345844269]
+		]);
+		addImage('DSC00280.jpg', [
+			[41.30436439115925, -81.75028681755066],
+			[41.302772590793346, -81.7500776052475],
+			[41.30279374788843, -81.75207585096359],
+			[41.30436237624664, -81.75212949514389]
+		]);
+
+
+	</script>
+</body>
+</html>
