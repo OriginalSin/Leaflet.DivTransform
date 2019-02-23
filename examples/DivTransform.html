@@ -9,11 +9,6 @@
 	<link rel="stylesheet" href="//www.kosmosnimki.ru/lib/geomixer_1.3/geomixer.css" crossorigin=""/>
 	<script src="//www.kosmosnimki.ru/lib/geomixer_1.3/geomixer-src.js?1508146119421" crossorigin=""></script>
 
-	<!-- <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script> -->
-
-	<!-- <script src="../src/L.ImageTransform.js"></script> -->
-	
-
 	<script src="../src/L.DivTransform.js"></script>
     
     <style>
@@ -30,8 +25,8 @@
 	<script>
 
 		var cloudmadeUrl = '//{s}.tile.osm.org/{z}/{x}/{y}.png',
-			cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
-			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(55.734799, 37.577861), zoom: 18});
+			cloudmade = new L.TileLayer(cloudmadeUrl, {maxNativeZoom: 18, maxZoom: 20}),
+			map = new L.Map('map', {layers: [cloudmade], center: new L.LatLng(55.734799, 37.577861), zoom: 18, maxZoom: 20});
 
         var item = {
             href: 'per.mp4',	// https://www.youtube.com/watch?v=8APykL7FaWA
@@ -39,107 +34,31 @@
             height: 720,
 			anchors: [[55.734885087148086, 37.57973849773407],[55.73387629706783, 37.57740497589111],[55.734583056924244, 37.57642865180969],[55.735594848975055, 37.57864952087402]]
 		};
-		// var video = document.getElementsByTagName('video')[0];
         var gmxImage = new L.DivTransform('', item.anchors, {
             opacity: 1,
             width: item.width,
             height: item.height,
-            // html: '<video id="video"></video><button id="button">start</button>'
             html: '<video id="myvideo" width="' + item.width + '" height="' + item.height + '"><source src="' + item.href + '" type="video/mp4"></video>'
         }).on('loaded', function() {
-// <video><source src="not-existing-video.mp4" type='video/mp4'></video>, the play() promise never rejects. It only happens if there are no valid sources.
 			
 			var cont = gmxImage.getContainer();
 			if (cont) {
 				var video = cont.getElementsByTagName('video')[0];
-					// button = cont.getElementsByTagName('button')[0],
-					// onButtonClick = function () {
-						// This will allow us to play video later...
-					video.oncanplaythrough = video.onended = function () {
+				map.addControl(L.control.gmxIcon({
+					togglable: true,
+					text: 'Play/Pause Video'
+				})
+				.on('statechange', function () {
+				   if (video.paused){
 						video.play();
-					};
-				// video.play();
-/*				
-						video.load();
-				fetch('./per.mp4')
-				.then(response => response.blob())
-				.then(blob => {
-				  video.srcObject = blob;
-console.log('play', blob);
-				  return video.play();
-				})
-				.then(_ => {
-console.log('Video playback started', arguments);
-				  // Video playback started ;)
-				})
-				.catch(e => {
-console.log('Video playback failed', arguments);
-				  // Video playback failed ;(
-				});
-*/
-					// };
-
-				// button.addEventListener('click', onButtonClick);
-/*
-						//setTimeout(function() {
-				// var video = cont.getElementsByTagName('video')[0];
-				if (video) {
-					cont.appendChild(video);
-					// video.play(0);
-					var thePromise = video.play(0);
-console.log('kkkkkk', thePromise);
-
-					thePromise.then(function(_) {
-
-						item.pause();
-						item.currentTime = 0;
-
-					}).catch(console.log);
-// video.autoplay = true;
-					// video.oncanplaythrough = video.onended = function () {
-						// video.play();
-					// };
-				}
-						//}, 5000);
-*/
+					} else{
+						video.pause();
+					}
+				}));
 			}
 		});
 		map.addLayer(gmxImage);
         gmxImage.bringToBack();
-/*
-		// To modify the anchor points on image
-        L.gmxPolygon = L.Polygon.extend({
-            disableAddRemovePoints: function () {
-                var poly = this.editing._poly;
-                for(var key in this.editing._markerGroup._layers) {
-                    var marker = this.editing._markerGroup._layers[key];
-                    if(marker._index === undefined) marker._icon.style.display = 'none';
-                    else {
-                        marker.off('click');
-                        marker.on('drag', function (ev){poly.fire('drag');}, this);
-                    }
-                }
-            }
-        });
-        var polygon = new L.gmxPolygon(item.anchors, { fillOpacity: 0 });
-		polygon.editing.enable();
-		map.addLayer(polygon);
-		polygon.disableAddRemovePoints();
-		polygon.on('drag', function(ev) {
-            var newAnchors = [];
-            for(var i = 0, len = ev.target._latlngs.length; i < len; i++) {
-                var marker = ev.target._latlngs[i];
-                newAnchors.push([marker.lat, marker.lng]);
-            }
-            gmxImage.setAnchors(newAnchors);
-			gmxImage.setOpacity(0.5);
-		});
-		map.on('mouseup', function(ev) {
-			gmxImage.setOpacity(1);
-		});
-		map.addLayer(gmxImage);
-        gmxImage.bringToBack();
-*/
 	</script>
 </body>
 </html>
